@@ -23,7 +23,7 @@ ISBN::{{metaData.isbn}}
 {% for chapter in chapterHighlights %}
 #### {{chapter.chapterTitle}}
 {% for highlight in chapter.highlights %}
-- {{ highlight.markText }}   {% endfor %}{% endfor %}
+- {{ highlight.markText |trim }}   {% endfor %}{% endfor %}
 
 ### 读书笔记
 {% for chapter in bookReview.chapterReviews %}{% if chapter.reviews or chapter.chapterReview %}
