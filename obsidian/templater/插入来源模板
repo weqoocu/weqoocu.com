@@ -1,0 +1,2 @@
+ 文章来源：[<%tp.file.title%>](https://www.weqoocu.com/<% tp.frontmatter.postId %>.html) 
+ 编辑笔记：[OB链接](obsidian://open?vault=PKM&file=<%tp.file.title%>)
