@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,6 +12,7 @@
         }
         .form .item {
             margin-top: 10px;
+            display: none;
         }
         .form .item .title {
             float: left;
@@ -19,7 +21,7 @@
             width: 80%;
         }
         .content {
-            width: 76%;
+            width: 100%;
             height: 200px;
         }
         .submit {
@@ -34,12 +36,7 @@
 <body>
     <div class="contianer">
         <div class="form">
-            <div class="item">
-                <div class="title">编码：</div>
-                <div class="value">
-                    <input id="spanNo"/>
-                </div>
-            </div>
+
             <div class="item">
                 <div class="title">需求：</div>
                 <div class="value">
@@ -52,19 +49,30 @@
                     <input id="p2"/>
                 </div>
             </div>
-
             <div class="item">
-                <div class="title">正文：</div>
+                <div class="title">编码：</div>
                 <div class="value">
-                    <textarea class="content" id="p3">- </textarea>
+                    <input id="spanNo"/>
+                </div>
+            </div>
+            <div class="item1">
+                <div class="title"></div>
+                <div class="value">
+<h1> 闪念笔记</h1>      
+- 写闪念笔记的指导思想是：做一个生产者，不仅仅是一个消费者。 </br>
+- 基于这个指导思想，就应该多写闪念笔记</br>
+- 闪念笔记不仅仅只能记录卡片，还能生成各种结构化的记录(xq，jl，gw，ffjl) </br>   
+
+                    <br>
+                    <textarea class="content" id="p3"></textarea>
                 </div>
             </div>
         </div>
         <div class="submit">
-            <input id="submit" type="button" value="提交"/>
+            <input id="submit" type="button" value="闪念笔记"/>
             <div id="info"></div>
-            <input id="copyBtn" type="button" value="复制" disabled/>  
-            <div id="copyinfo"></div>
+            <!-- <input id="copyBtn" type="button" value="复制" disabled/>  
+            <div id="copyinfo"></div>*/ -->
 
         </div>
     </div>
@@ -101,9 +109,8 @@
             return document.getElementById(id);
         }
         $('spanNo').value = getNo()
-
-    // API帮助说明文档：https://marker.dotalk.cn/#/personSetting/openapi 
-        const api = '你的五彩API';
+// 获取你的五彩api的地址：https://marker.dotalk.cn/#/personSetting/openapi ，复制带creat的api地址
+        const api = '粘贴你的api地址';
 
         async function submit(data) {
             const res = await postData(api, data);
@@ -111,11 +118,12 @@
             let info = '提交失败'
             if (res && res.code) {
                 info = data.content
-                //info = '提交成功：' + new Date + '\n' + data.content
+                info = '提交成功：' + new Date + '\n' + data.content
                 $('p1').value = '';
                 $('p2').value = '';
                 $('p3').value = '';
                 $('spanNo').value = getNo()
+
             }
             $('info').innerText = info
         }
@@ -127,10 +135,10 @@
             const p2 = $('p2').value;
             const p3 = $('p3').value;
             const no = $('spanNo').value;
-            let content = '需求::' + p1;
-            content += '\n' + '产品::#' + p2;
-            content += '\n' + '编码::' + no;
-            content += '\n' + '### 正文\n' + p3;
+            let content = p3;
+            //content += '\n' + '产品::#' + p2;
+            //content += '\n' + '编码::' + no;
+            //content += '\n' + '### 正文\n' + p3;
             const param = { content };
             submit(param)
 
@@ -163,68 +171,6 @@ document.querySelector('#copyBtn').addEventListener('click', async () => {
     await copyToClipboard(infoText);      
 });
 
-
-
-
-//         async function copyToClipboard(text) {  
-//             try {  
-//                 await navigator.clipboard.writeText(text);  
-//                 $('copyinfo').innerText ='复制成功'
-
-//                 //alert('复制成功！');  
-//             } catch (err) {  
-//                 console.error('复制失败：', err); 
-//                 $('copyinfo').innerText ='复制失败'
- 
-//                 //alert('复制失败，请手动复制');  
-//             }  
-//         }
-
-
-//      // 启用复制按钮  
-//        $('copyBtn').disabled = false;  
-
-//         // 添加点击事件监听器到复制按钮  
-
-//         document.querySelector('#copyBtn').addEventListener('click', async () => {    
-//     const infoText = document.querySelector('#info').innerText;    
-//     await copyToClipboard(infoText);    
-// });
-
-
-
-
-//        document.getElementById('copyBtn').addEventListener('click', async () => {    
-//     const infoText = document.getElementById('info').innerText;    
-//     await copyToClipboard(infoText);    
-// });
-
-        // // 添加点击事件监听器到复制按钮
-        // $('copyBtn').addEventListener('click', async () => {
-        //     const infoText = $('info').innerText;
-        //     try {
-        //         const clipboard = new ClipboardJS('.copyBtn');
-        //         clipboard.on('success', function(e) {
-        //             $('copyinfo').innerText = '复制成功';
-        //         });
-        //         clipboard.on('error', function(e) {
-        //             console.error('复制失败：', e);
-        //             $('copyinfo').innerText = '复制失败，请手动复制';
-        //         });
-        //         clipboard.setData('text/plain', infoText);
-        //         clipboard.trigger();
-        //     } catch (err) {
-        //         console.error('复制失败：', err);
-        //         $('copyinfo').innerText = '复制失败，请手动复制';
-        //     }
-        // });
-
-
-        // 添加点击事件监听器到复制按钮  
-        // $('copyBtn').addEventListener('click', async () => {  
-        //   const infoText = $('info').innerText;  
-        //    await copyToClipboard(infoText);  
-        // });
 
 
 
