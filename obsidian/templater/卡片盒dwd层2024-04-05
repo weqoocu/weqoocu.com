@@ -1,0 +1,121 @@
+
+[[<% tp.file.title.split("_")[1] %>]]
+已采集，排除所有的中间处理文件
+
+### 互动记录
+包括：互动记录 排除双链： 已采集 、付费记录  检查清单
+```dataview
+
+table without id  dateformat(file.ctime,"yyyy-MM-dd") as 时间, 需求,"[["+file.name+"|详情]]" as 笔记详情
+
+from  [[<% tp.file.title.split("_")[1] %>]] and ![[个人词条]] and -#moc  and -#dataview  and ![[已采集]]   and -[[付费记录]] and -[[检查清单]] and -"5卡片盒"
+
+
+WHERE file.name != this.file.name    and  !icontains(file.name,"dataview_")  and 编码=null and 需求!=null and 笔记类型!="page"
+
+sort  file.ctime desc
+
+```
+
+
+### 五彩未整理闪念笔记
+
+五彩：排除已采集、官网、weread 、读书笔记
+
+```dataview
+
+table without id  编码,file.folder as 路径,标题 ,"[["+file.name+"|详情]]"  as 详情
+
+from   [[<% tp.file.title.split("_")[1] %>]]   and ![[个人词条]] and -[[已采集]] and -[[官网]] and -[[迭代记录]] and -[[博客]] and -[[下载]]  and -#moc  and -#dataview  and   "9文献笔记"  and -[[付费记录]] and -[[互动记录]] and -"9文献笔记/读书笔记" and -"9文献笔记/weread" and -[[github]]
+
+where  number(编码)<0 and !icontains(source,"chromewebstore") and 笔记类型="dailynote" and 需求=null
+
+sort  file.folder
+
+```
+
+
+
+### 五彩文章
+
+五彩：排除已采集、官网、weread 、读书笔记
+
+```dataview
+
+table without id  dateformat(file.ctime,"yyyy-MM-dd") as  创建时间, "["+标题+"]("+url+")" as 原文,"[["+file.name+"|详情]]"  as 详情
+
+from   [[<% tp.file.title.split("_")[1] %>]] 
+
+where   笔记类型="page"
+
+sort  file.ctime
+
+```
+
+
+
+### 已编码卡片
+
+```dataview
+
+table without id  编码,file.folder as 路径 ,"[["+file.name+"|"+需求+"]]" as 需求
+from   ![[个人词条]]  and -#moc  and -#dataview 
+
+where  number(编码)>0 and !icontains(source,"chromewebstore") and icontains(string(产品),"<% tp.file.title.split("_")[1] %>]]")
+
+sort  编码
+
+```
+
+
+
+### 卡片汇总并复制到剪贴板
+```dataviewjs 
+
+//输入目标小标题（含#），例如：#### 项目进度条  
+const header = '### 正文';  
+  
+// 按【路径或文件夹、文件名、标签】筛选并按修改时间降序排列  
+// 注意：这里应该是按照某个字段排序，但'编码'需要是页面的一个属性。  
+// 如果'编码'是页面的一个字段，应确保它是已定义的。否则，排序可能不会正常工作。  
+// 另外，原代码中的排序是升序（"asc"），如果需要降序，应改为"desc"。  
+// 由于您之前要求的是按照'编码'升序排列，这里保持为'asc'。  
+const pages = dv.pages('"9文献笔记" OR "5卡片盒" or "Thino"').filter(b => b.产品?.path == '5卡片盒/<% tp.file.title.split("_")[1] %>.md').sort(p => p.编码, "asc");  
+  
+// This regex will return text from the Summary header, until it reaches  
+// the next header, a horizontal line, or the end of the file  
+const regex = new RegExp(`\\n${header.replace(/#/g, '\\#')}\\r?\\n(.*?)(\\n#+ |\\n---|$)`, 's');  
+  
+let fulltext = ''; // 初始化fulltext为空字符串  
+  
+for (const page of pages) {  
+    const file = app.vault.getAbstractFileByPath(page.file.path);  
+    // Read the file contents  
+    const contents = await app.vault.read(file);  
+    // Extract the summary via regex  
+    const match = contents.match(regex);  
+    if (match && match[1].trim()) {  
+        // 显示页面内容  
+        dv.header(3, page.编码 + ' ' + page.需求);  
+        dv.paragraph(match[1].trim());  
+          
+        // 同时将内容添加到fulltext  
+        fulltext += `### ${page.编码} ${page.需求}\n\n${match[1].trim()}\n\n`;  
+    }  
+}  
+  
+// 复制到剪贴板  
+if (navigator.clipboard) {  
+    navigator.clipboard.writeText(fulltext)  
+        .then(() => console.log('Text copied to clipboard'))  
+        .catch(err => console.error('Error in copying text: ' + err));  
+} else {  
+    console.error('Clipboard API not available');  
+}
+
+
+
+```
+
+
+
