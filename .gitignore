@@ -2,3 +2,4 @@
 .vscode/weqoocu.com_id_ed25519
 .vscode/*
 weekly
+.node_modules/*
